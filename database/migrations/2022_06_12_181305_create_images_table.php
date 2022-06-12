@@ -19,10 +19,10 @@ return new class extends Migration
             $table->string('path', 2000);
             $table->string('type', 25);
             $table->text('data');
-            $table->string('output_path', 2000);
+            $table->string('output_path', 2000)->nullable();
             $table->timestamp('created_at');
-            $table->foreignIdFor(\App\Models\Album::class, 'album_id');
-            $table->foreignIdFor(\App\Models\User::class, 'user_id');
+            $table->foreignIdFor(\App\Models\Album::class, 'album_id')->nullable();
+            $table->foreignIdFor(\App\Models\User::class, 'user_id')->nullable();
             // $table->timestamps();
         });
     }
