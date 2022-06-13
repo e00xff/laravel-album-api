@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
-use App\Http\Resources\AlbumResource;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\AlbumResource;
 use App\Models\Album;
 use App\Http\Requests\StoreAlbumRequest;
 use App\Http\Requests\UpdateAlbumRequest;
@@ -12,7 +13,7 @@ class AlbumController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index()
     {
@@ -24,7 +25,7 @@ class AlbumController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\StoreAlbumRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return AlbumResource
      */
     public function store(StoreAlbumRequest $request)
     {
@@ -37,7 +38,7 @@ class AlbumController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Album  $album
-     * @return \Illuminate\Http\Response
+     * @return AlbumResource
      */
     public function show(Album $album)
     {
@@ -51,7 +52,7 @@ class AlbumController extends Controller
      *
      * @param  \App\Http\Requests\UpdateAlbumRequest  $request
      * @param  \App\Models\Album  $album
-     * @return \Illuminate\Http\Response
+     * @return AlbumResource
      */
     public function update(UpdateAlbumRequest $request, Album $album)
     {
