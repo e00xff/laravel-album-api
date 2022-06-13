@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AlbumResource;
 use App\Models\Album;
 use App\Http\Requests\StoreAlbumRequest;
 use App\Http\Requests\UpdateAlbumRequest;
@@ -15,7 +16,8 @@ class AlbumController extends Controller
      */
     public function index()
     {
-        return Album::all();
+        // return Album::all();
+        return AlbumResource::collection(Album::paginate());
     }
 
     /**
@@ -27,7 +29,8 @@ class AlbumController extends Controller
     public function store(StoreAlbumRequest $request)
     {
         $album = Album::create($request->all());
-        return $album;
+        // return $album;
+        return new AlbumResource($album);
     }
 
     /**
@@ -38,7 +41,9 @@ class AlbumController extends Controller
      */
     public function show(Album $album)
     {
-        return $album;
+        // return $album;
+
+        return new AlbumResource($album);
     }
 
     /**
@@ -51,8 +56,9 @@ class AlbumController extends Controller
     public function update(UpdateAlbumRequest $request, Album $album)
     {
         $album->update($request->all());
+        // return $album;
 
-        return $album;
+        return new AlbumResource($album);
     }
 
     /**
