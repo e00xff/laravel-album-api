@@ -7,6 +7,7 @@ use App\Http\Resources\V1\AlbumResource;
 use App\Models\Album;
 use App\Http\Requests\StoreAlbumRequest;
 use App\Http\Requests\UpdateAlbumRequest;
+use Illuminate\Http\Request;
 
 class AlbumController extends Controller
 {
@@ -15,10 +16,9 @@ class AlbumController extends Controller
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        // return Album::all();
-        return AlbumResource::collection(Album::paginate());
+        return AlbumResource::collection(Album::where('user_id', $request->user()->id)->paginate());
     }
 
     /**
@@ -29,8 +29,10 @@ class AlbumController extends Controller
      */
     public function store(StoreAlbumRequest $request)
     {
-        $album = Album::create($request->all());
-        // return $album;
+        $data = $request->all();
+        $data['user_id'] = $request->user()->id;
+        $album = Album::create($data);
+
         return new AlbumResource($album);
     }
 
@@ -40,9 +42,11 @@ class AlbumController extends Controller
      * @param  \App\Models\Album  $album
      * @return AlbumResource
      */
-    public function show(Album $album)
+    public function show(Request $request, Album $album)
     {
-        // return $album;
+        if($album->user_id != $request->user()->id) {
+            return abort(403, 'Unauthorized');
+        }
 
         return new AlbumResource($album);
     }
@@ -56,8 +60,11 @@ class AlbumController extends Controller
      */
     public function update(UpdateAlbumRequest $request, Album $album)
     {
+        if($album->user_id != $request->user()->id) {
+            return abort(403, 'Unauthorized');
+        }
+
         $album->update($request->all());
-        // return $album;
 
         return new AlbumResource($album);
     }
@@ -68,8 +75,12 @@ class AlbumController extends Controller
      * @param  \App\Models\Album  $album
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Album $album)
+    public function destroy(Request $request, Album $album)
     {
+        if($album->user_id != $request->user()->id) {
+            return abort(403, 'Unauthorized');
+        }
+
         $album->delete();
 
         return response('', 204);

@@ -42,6 +42,5 @@ class DashboardController extends Controller
         $token->delete();
 
         return redirect('dashboard');
-
     }
 }
