@@ -5,8 +5,10 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImageResizeRequest;
 use App\Http\Resources\V1\ImageManipulationResource;
+use App\Models\Album;
 use App\Models\ImageManipulation;
-use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -17,20 +19,31 @@ class ImageManipulationController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
-        //
+        return ImageManipulationResource::collection(ImageManipulation::paginate());
     }
+
+
+    public function getByAlbum(Album $album): AnonymousResourceCollection
+    {
+        $where = [
+            'album_id' => $album->id
+        ];
+
+        return ImageManipulationResource::collection(ImageManipulation::where($where)->paginate());
+    }
+
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\ImageResizeRequest  $request
-     * @return \Illuminate\Http\Response
+     * @param ImageResizeRequest $request
+     * @return ImageManipulationResource
      */
-    public function resize(ImageResizeRequest $request)
+    public function resize(ImageResizeRequest $request): ImageManipulationResource
     {
         $all = $request->all();
 
@@ -80,7 +93,6 @@ class ImageManipulationController extends Controller
 //        var_dump($width, $height);
 //        echo '</pre>';
 
-
         $resizedFilename = $filename.'-resized.'.$extension;
         $image->resize($width, $height)->save($absolutePath.$resizedFilename);
 
@@ -89,22 +101,34 @@ class ImageManipulationController extends Controller
         $imageManipulation = ImageManipulation::create($data);
 
         return new ImageManipulationResource($imageManipulation);
+    }
 
+    /**
+     * Display the specified resource
+     *
+     * @param ImageManipulation $image
+     * @return ImageManipulationResource
+     */
+    public function show(ImageManipulation $image)
+    {
+        return new ImageManipulationResource($image);
     }
 
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Image  $image
-     * @return \Illuminate\Http\Response
+     * @param ImageManipulation $image
+     * @return Response
      */
-    public function destroy(Image $image)
+    public function destroy(ImageManipulation $image): Response
     {
-        //
+        $image->delete();
+
+        return response('', 204);
     }
 
-    protected function getWidthAndHeight($w, $h, $originalPath)
+    protected function getWidthAndHeight($w, $h, $originalPath): array
     {
         $image = Image::make($originalPath);
         $originalWidth = $image->width();
