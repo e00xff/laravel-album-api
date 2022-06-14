@@ -39,4 +39,12 @@ class ImageResizeRequest extends FormRequest
 
         return $rules;
     }
+
+    public function messages()
+    {
+        return [
+            'w.regex' => 'Please specify width as a valid number in pixels or in %',
+            'h.regex' => 'Please specify height as a valid number in pixels or in %',
+        ];
+    }
 }
